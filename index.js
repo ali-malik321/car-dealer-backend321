@@ -22,6 +22,48 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 
+async function run() {
+    try {
+        await client.connect();
+        await client.connect();
+        const database = client.db("fullStackCarApp");
+        const carsCollection = database.collection("cars");
+
+        //Get all cars
+        app.get('/cars', async (req, res) => {
+            const cursor = carsCollection.find({});
+            let result;
+            if (req.query.size) {
+                const size = parseInt(req.query.size);
+                result = await cursor.limit(size).toArray();
+            }
+            else {
+                result = await cursor.toArray();
+            }
+            res.json(result);
+        })
+
+        //Get single car by unique id
+        app.get('/car/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const car = await carsCollection.findOne(query);
+            res.json(car);
+        })
+
+    }
+    finally {
+        //   await client.close();
+    }
+}
+run().catch(console.dir);
+
+
+
+
+
+
+
 
 app.get('/', (req, res) => {
     console.log('Hitting backend');
