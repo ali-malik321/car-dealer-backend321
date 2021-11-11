@@ -132,7 +132,22 @@ async function run() {
 
         app.post('/orders', async (req, res) => {
             const order = req.body;
-            const result = await ordersCollection.insertOne(order);
+            const query = { email: order.email, modelID: order.modelID };
+            const userOrder = await ordersCollection.findOne(query);
+            let result;
+            if (userOrder) {
+                userOrder.quantity += 1;
+                const filter = query;
+                const options = { upsert: true };
+                const updateDoc = {
+                    $set: userOrder
+                };
+                result = await ordersCollection.updateOne(filter, updateDoc, options);
+            }
+            else {
+                order.quantity = 1;
+                result = await ordersCollection.insertOne(order);
+            }
             res.json(result);
         })
 
