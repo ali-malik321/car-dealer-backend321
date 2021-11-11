@@ -53,6 +53,7 @@ async function run() {
         const carsCollection = database.collection("cars");
         const usersCollection = database.collection("users");
         const ordersCollection = database.collection("orders");
+        const reviewsCollection = database.collection("reviews");
 
         //Get all cars
         app.get('/cars', async (req, res) => {
@@ -170,6 +171,19 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await ordersCollection.deleteOne(query);
+            res.json(result);
+        })
+
+        //Reviews API
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewsCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        })
+
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
             res.json(result);
         })
 
