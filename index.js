@@ -128,6 +128,20 @@ async function run() {
         })
 
 
+        app.get('/my-orders', verifyToken, async (req, res) => {
+            const userEmail = req.query.email;
+            if (req.decodedEmail === userEmail) {
+                console.log('Hello')
+                const query = { email: userEmail };
+                const cursor = ordersCollection.find(query);
+                const orderDetails = await cursor.toArray();
+                res.json(orderDetails);
+            }
+            else {
+                //Sending status of unauthorization
+                res.status(401).json({ message: 'User Not Authorized' })
+            }
+        })
 
 
         app.post('/orders', async (req, res) => {
@@ -148,6 +162,14 @@ async function run() {
                 order.quantity = 1;
                 result = await ordersCollection.insertOne(order);
             }
+            res.json(result);
+        })
+
+        //DELETE API to delete user orders
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(query);
             res.json(result);
         })
 
