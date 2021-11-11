@@ -187,6 +187,14 @@ async function run() {
             res.json(result);
         })
 
+
+        // API to add more cars by admin
+        app.post('/add-car', async (req, res) => {
+            const newCar = (req.body);
+            const result = await carsCollection.insertOne(newCar);
+            res.json(result);
+        })
+
     }
     finally {
         //   await client.close();
