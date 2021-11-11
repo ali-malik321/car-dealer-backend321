@@ -28,12 +28,14 @@ async function run() {
         await client.connect();
         const database = client.db("fullStackCarApp");
         const carsCollection = database.collection("cars");
+        const usersCollection = database.collection("users");
+        const ordersCollection = database.collection("orders");
 
         //Get all cars
         app.get('/cars', async (req, res) => {
             const cursor = carsCollection.find({});
             let result;
-            if (req.query.size) {
+            if (req?.query?.size) {
                 const size = parseInt(req.query.size);
                 result = await cursor.limit(size).toArray();
             }
@@ -49,6 +51,35 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const car = await carsCollection.findOne(query);
             res.json(car);
+        })
+
+        //Add users to database those who signed up with Email Password
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+        })
+
+        //Add users to database those who signed up with External Provider
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+
+        })
+
+
+
+
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            const result = await ordersCollection.insertOne(order);
+            res.json(result);
         })
 
     }
