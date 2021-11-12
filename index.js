@@ -131,7 +131,7 @@ async function run() {
 
         app.get('/my-orders', verifyToken, async (req, res) => {
             const userEmail = req.query.email;
-            if (req.decodedEmail === userEmail) {
+            if (req.decodedEmail === userEmail && userEmail !== undefined) {
                 console.log('Hello')
                 const query = { email: userEmail };
                 const cursor = ordersCollection.find(query);
@@ -147,7 +147,7 @@ async function run() {
         //GET all orders for admin
         app.get('/allOrders', verifyToken, async (req, res) => {
             const userEmail = req.query.email;
-            if (req.decodedEmail === userEmail) {
+            if (req.decodedEmail === userEmail && userEmail !== undefined) {
                 const cursor = ordersCollection.find({});
                 const result = await cursor.toArray();
                 res.json(result);
@@ -230,6 +230,34 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await carsCollection.deleteOne(query);
             res.json(result);
+        })
+
+        app.get('/dashboard-data', verifyToken, async (req, res) => {
+            const userEmail = req.query.email;
+            if (req.decodedEmail === userEmail && userEmail !== undefined) {
+                let result = {};
+                let cars = database.collection('cars');
+                await cars.count().then((carsCount) => {
+                    result.cars = carsCount;
+                });
+                let users = database.collection('users');
+                await users.count().then((usersCount) => {
+                    result.users = usersCount;
+                });
+                let orders = database.collection('orders');
+                await orders.count().then((ordersCount) => {
+                    result.orders = ordersCount;
+                });
+                let reviews = database.collection('reviews');
+                await reviews.count().then((reviewsCount) => {
+                    result.reviews = reviewsCount;
+                });
+                res.json(result);
+            }
+            else {
+                //Sending status of unauthorization
+                res.status(401).json({ message: 'User Not Authorized' })
+            }
         })
 
     }
