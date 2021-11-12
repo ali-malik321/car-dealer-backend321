@@ -216,6 +216,13 @@ async function run() {
             res.json(result);
         })
 
+        //DELETE API to delete review from reviews collection by admin
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reviewsCollection.deleteOne(query);
+            res.json(result);
+        })
 
         // API to add more cars by admin
         app.post('/add-car', async (req, res) => {
