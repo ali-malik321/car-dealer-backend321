@@ -144,6 +144,35 @@ async function run() {
             }
         })
 
+        //GET all orders for admin
+        app.get('/allOrders', verifyToken, async (req, res) => {
+            const userEmail = req.query.email;
+            if (req.decodedEmail === userEmail) {
+                const cursor = ordersCollection.find({});
+                const result = await cursor.toArray();
+                res.json(result);
+            }
+            else {
+                //Sending status of unauthorization
+                res.status(401).json({ message: 'User Not Authorized' })
+            }
+
+        })
+
+        //UPDATE API
+        app.put('/ordersUpdate/:id', async (req, res) => {
+            const newStatus = req.body[0];
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    status: newStatus
+                },
+            };
+            const result = await ordersCollection.updateOne(filter, updateDoc);
+            res.json(result);
+        })
+
 
         app.post('/orders', async (req, res) => {
             const order = req.body;
