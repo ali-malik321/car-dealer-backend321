@@ -123,7 +123,7 @@ async function run() {
                 }
             }
             else {
-                res.status(403).json({ message: 'you do not have access to make admin' })
+                res.status(403).json({ message: 'you do not have access to make admin power' })
             }
 
         })
