@@ -57,11 +57,23 @@ async function run() {
 
         //Get all cars
         app.get('/cars', async (req, res) => {
-            const cursor = carsCollection.find({});
+            let cursor = carsCollection.find({});
             let result;
-            if (req?.query?.size) {
-                const size = parseInt(req.query.size);
-                result = await cursor.limit(size).toArray();
+            if (req?.query?.condition) {
+                const condition = req?.query?.condition;
+                if (condition === "All") {
+                    result = await cursor.toArray();
+                }
+                else if (condition === "New") {
+                    const query = { condition: "New" }
+                    cursor = carsCollection.find(query);
+                    result = await cursor.toArray();
+                }
+                else {
+                    const query = { condition: "Used" }
+                    cursor = carsCollection.find(query);
+                    result = await cursor.toArray();
+                }
             }
             else {
                 result = await cursor.toArray();
