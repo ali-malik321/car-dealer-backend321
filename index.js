@@ -5,7 +5,7 @@ const cors = require('cors');
 require('dotenv').config()
 const ObjectId = require('mongodb').ObjectId;
 const admin = require("firebase-admin");
-
+const fileUpload = require('express-fileupload');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -22,6 +22,7 @@ admin.initializeApp({
 //Middleware use for server
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
 
 
 //MongoDB
@@ -238,7 +239,25 @@ async function run() {
 
         // API to add more cars by admin
         app.post('/add-car', async (req, res) => {
-            const newCar = (req.body);
+            const data = req.body;
+            const availableIn = JSON.parse(data?.availableIn);
+            const features = JSON.parse(data?.features);
+            data.availableIn = availableIn;
+            data.features = features;
+
+            // Converting images to base 64 to store in data
+            const imgData = req.files.img.data;
+            const encodedImg = imgData.toString('base64')
+            const img = Buffer.from(encodedImg, 'base64');
+
+            const bannerData = req.files.banner.data;
+            const encodedBanner = bannerData.toString('base64')
+            const banner = Buffer.from(encodedBanner, 'base64');
+
+            data.img = img;
+            data.banner = banner;
+
+            const newCar = data;
             const result = await carsCollection.insertOne(newCar);
             res.json(result);
         })
