@@ -66,12 +66,12 @@ async function run() {
                     result = await cursor.toArray();
                 }
                 else if (condition === "new-cars") {
-                    const query = { condition: "new-cars" }
+                    const query = { condition: "New" }
                     cursor = carsCollection.find(query);
                     result = await cursor.toArray();
                 }
                 else {
-                    const query = { condition: "used-cars" }
+                    const query = { condition: "Used" }
                     cursor = carsCollection.find(query);
                     result = await cursor.toArray();
                 }
