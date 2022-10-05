@@ -22,7 +22,6 @@ const serviceAccount = require("./a-cart-5cdf2-firebase-adminsdk-4z4pg-52c9cea3b
 
 
 admin.initializeApp({
-
     
     credential: admin.credential.cert(serviceAccount)
 });
