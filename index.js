@@ -8,11 +8,14 @@ const admin = require("firebase-admin");
 const fileUpload = require('express-fileupload');
 
 const app = express();
-const port = process.env.PORT || 5000;
+// const port = process.env.PORT || 5000;
+const port = 5000;
 
 
 //Firebase Admin Initialization
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+// const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+const serviceAccount = require("./a-cart-5cdf2-firebase-adminsdk-4z4pg-52c9cea3bf.json");
+
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -26,7 +29,8 @@ app.use(fileUpload());
 
 
 //MongoDB
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7qft9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7qft9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = 'mongodb+srv://admin:snexus123@cluster0.djx64nr.mongodb.net/?retryWrites=true&w=majority'
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //Function to verify user using JWT token
